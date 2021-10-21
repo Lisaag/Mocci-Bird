@@ -6,19 +6,19 @@ public class FlyBehaviour : MonoBehaviour
 {
     [SerializeField] private float fallingSpeed = 1.2f;
     [SerializeField] private float jumpingSpeed = 1.2f;
+    [SerializeField] private float jumpDistance = 2.0f;
 
     private Touch touch;
     private Animator animator = null;
 
-    private const float minFallSpeed = 1.2f;
-    private const float maxFallSpeed = 8.0f;
+    private const float minFallSpeed = 3.0f;
+    private const float maxFallSpeed = 13.0f;
     private float currentFallSpeed = minFallSpeed;
 
     float fallStartTime = 0f;
 
     private float startY = 0.0f;
 
-    private float jumpDistance = 2.0f;
     private float startJumpPos = 0.0f;
     bool isJumping = true;
 
@@ -31,12 +31,12 @@ public class FlyBehaviour : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"screen width: {Screen.width}");
         fallStartTime = Time.time;
     }
 
     void FixedUpdate()
     {
+        if (!GameManager.isGameStarted) return;
         CheckTap();
         if (!isJumping)
         {
@@ -50,25 +50,15 @@ public class FlyBehaviour : MonoBehaviour
 
     private void CheckTap()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.touchCount > 0)
         {
             touch = Input.GetTouch(0);
 
             if (touch.phase == TouchPhase.Began)
             {
-                animator.Play("tap", 0, 0);
-                startJumpPos = transform.localPosition.y;
-                isJumping = true;
-                fallStartTime = Time.time;
-            }
-        }
-        else if (Input.touchCount > 0)
-        {
-            touch = Input.GetTouch(0);
-
-            if (touch.phase == TouchPhase.Began)
-            {
-                animator.Play("tap", 0, 0);
+                animator.Play("MocciFly", 0, 0);
+                //animator.SetTrigger("tap");
+                Debug.Log("TAp!");
                 startJumpPos = transform.localPosition.y;
                 isJumping = true;
                 fallStartTime = Time.time;
@@ -84,12 +74,11 @@ public class FlyBehaviour : MonoBehaviour
         float fallDistance = currentFallSpeed * Time.deltaTime;
         transform.localPosition = new Vector2(transform.localPosition.x, transform.localPosition.y - fallDistance);
 
-        float t = (Time.time - fallStartTime) / 1.0f;
+        float t = (Time.time - fallStartTime) / 0.5f;
         transform.localEulerAngles = new Vector3(0, 0, Mathf.SmoothStep(0.0f, -65.0f, t));
 
         if (Camera.main.WorldToScreenPoint(transform.localPosition).y < 0f)
         {
-            Debug.Log("lost");
             currentFallSpeed = minFallSpeed;
             transform.localPosition = new Vector2(transform.localPosition.x, 0f);
             transform.localEulerAngles = new Vector3(0f, 0f, 0f);
@@ -104,7 +93,7 @@ public class FlyBehaviour : MonoBehaviour
 
         Vector2 targetPosition = new Vector2(transform.localPosition.x, startJumpPos + jumpDistance);
 
-        Debug.Log($"Current Y = {transform.localPosition.y},    Target y = {targetPosition.y}");
+        //Debug.Log($"Current Y = {transform.localPosition.y},    Target y = {targetPosition.y}");
 
         transform.localPosition = Vector2.MoveTowards(transform.localPosition, targetPosition, jumpingSpeed * Time.deltaTime);
 
@@ -118,5 +107,26 @@ public class FlyBehaviour : MonoBehaviour
             }
         }
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("SkewerTop"))
+        {
+            GameManager.GameOver(other.transform.parent.GetComponent<SkewerBehaviour>().skewerIndex, DeathCause.Top, GetComponent<ColorRandomizer>().currentColor);
+        }
+        else if (other.gameObject.CompareTag("SkewerBottom"))
+        {
+            GameManager.GameOver(other.transform.parent.GetComponent<SkewerBehaviour>().skewerIndex, DeathCause.Bottom, GetComponent<ColorRandomizer>().currentColor);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("SkewerGap"))
+        {
+            GameManager.Score++;
+            UIManager.instance.UpdateScore();
+        }
     }
 }

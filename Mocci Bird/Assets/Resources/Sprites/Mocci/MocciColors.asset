@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fe194207a22249ab9c44a535bc1ee, type: 3}
+  m_Name: MocciColors
+  m_EditorClassIdentifier: 
+  allColorPresets:
+  - color: 0
+    bodyColor: {r: 0.6745098, g: 0.17254902, b: 0.8, a: 0}
+    shadowColor: {r: 0.7176471, g: 0.4862745, b: 0.81960785, a: 0}
+  - color: 1
+    bodyColor: {r: 1, g: 0.6745283, b: 0.95423055, a: 0}
+    shadowColor: {r: 1, g: 0.8632076, b: 0.9871757, a: 0}
+  - color: 3
+    bodyColor: {r: 0.4762816, g: 0.7264151, b: 0.50261146, a: 0}
+    shadowColor: {r: 0.69900316, g: 0.7924528, b: 0.69900316, a: 0}
+  - color: 2
+    bodyColor: {r: 1, g: 1, b: 1, a: 0}
+    shadowColor: {r: 0.764151, g: 0.764151, b: 0.764151, a: 0}
